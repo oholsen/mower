@@ -18,20 +18,18 @@ formatters:
     format: '%(asctime)s.%(msecs)03d %(levelname)-8s %(name)-6s %(message)s'
     datefmt: '%Y-%m-%d %H:%M:%S'
 root:
-  level: INFO
+  level: DEBUG
   handlers: [console, file]
 loggers:
+  main:
+    level: DEBUG
   websockets:
     level: INFO
   matplotlib:
     level: INFO
   edge_control.models.tracking:
-    level: INFO
+    level: DEBUG
   edge_control.gps:
     level: INFO
   edge_control.api:
-    level: DEBUG
-  edge_control.arch:
-    level: DEBUG
-  edge_control.util:
-    level: DEBUG
+    level: INFO
