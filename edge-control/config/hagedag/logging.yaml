@@ -1,0 +1,37 @@
+version: 1
+disable_existing_loggers: False
+handlers:
+  console:
+    level: DEBUG
+    class: logging.StreamHandler
+    formatter: default
+    stream: ext://sys.stdout
+  file:
+    level: DEBUG
+    class: logging.handlers.TimedRotatingFileHandler
+    formatter: default
+    filename: data/record.log
+    when: midnight
+    backupCount: 7
+formatters:
+  default:
+    format: '%(asctime)s.%(msecs)03d %(levelname)-8s %(name)-6s %(message)s'
+    datefmt: '%Y-%m-%d %H:%M:%S'
+root:
+  #level: INFO
+  level: DEBUG
+  #handlers: [file]
+  handlers: [console, file]
+loggers:
+  websockets:
+    level: INFO
+  matplotlib:
+    level: INFO
+  edge_control.models.tracking:
+    level: INFO
+  edge_control.gps:
+    level: INFO
+  edge_control.api:
+    level: INFO
+  edge_control.arch:
+    level: INFO

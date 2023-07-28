@@ -1,0 +1,16 @@
+id: hagekverna
+name: Hagekverna
+type: husqvarna
+
+battery_cutoff: 18.0  # 5 x 3.6V, e-stop, should return to dock before that
+max_speed: 0.3 # m/s
+min_speed: 0  # m/s
+max_omega: 1.0  # rad/s
+wheel_base: 0.325
+
+mower:
+  cut_power: 1
+  cut_diameter: 0.2
+
+motor_control:
+  port: COM4

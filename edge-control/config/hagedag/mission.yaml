@@ -1,0 +1,3 @@
+control:
+  speed: 0.3
+  omega: 0.15

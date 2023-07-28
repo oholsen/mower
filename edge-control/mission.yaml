@@ -1,0 +1,9 @@
+control:
+  speed: 0.3
+  omega: 0.4
+  theta_distance: 0.5
+  speed_theta: 0.75
+  #speed_relax: 0.9
+
+on_site:
+  buffer: 10

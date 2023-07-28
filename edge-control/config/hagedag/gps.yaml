@@ -1,0 +1,11 @@
+gps:
+    port: /dev/ublox
+ntrip:
+    server: '159.162.103.14'
+    port: 2101
+    mount_point: 'CPOSRTCM32'
+    username: SECRET
+    password: SECRET
+offset:
+    x: 0
+    y: 0

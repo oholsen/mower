@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <style>
+      body {
+        margin: 0px;
+        padding: 0px;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+    </style>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+  </head>
+  <body>
+    <div id="map">
+      <canvas id="layer1" style="z-index: 1; position:absolute; left:0px; top:0px;">
+        This text is displayed if your browser does not support HTML5 Canvas.
+      </canvas>
+      <canvas id="layer2" style="z-index: 2; position:absolute; left:0px; top:0px;" onmousemove="onMouseMove(event)">
+        This text is displayed if your browser does not support HTML5 Canvas.
+      </canvas>
+      <div>
+        <span>Cursor &nbsp;<span id="mouse_x">x</span>&nbsp;<span id="mouse_y">y</span></span>&nbsp; &nbsp;
+        <span>Robot &nbsp;<span id="robot_x">x</span>&nbsp;<span id="robot_y">y</span>&nbsp;<span id="robot_heading">heading</span></span>
+      </div>
+    </div>
+
+    <div id="control">
+      <input type="checkbox" id="heartbeat">Control
+      <button id="stop">Stop</button>
+      <br>
+      <button id="forward">Forward</button>
+      <button id="backward">Backward</button>
+      <button id="left">Left</button>
+      <button id="right">Right</button>
+      <br>
+      <label for="mission_name">Mission</label>
+      <input id="mission_name" type="text">
+      <button id="mission_start">Start</button>
+      <button id="mission_abort">Abort</button>
+      <br>
+
+      <table id="statusgrid" style="margin-top: 10px;">
+        <tr><td>Websocket</td><td id="websocket">Closed</td><td></td></tr>
+        <tr><td>Time</td><td id="time"></td><td></td></tr>
+      </table>
+      <pre id="status">Status...</pre>
+    </div>
+
+    <script src="map.js"></script>
+    <script src="control.js"></script>
+  </body>
+</html>

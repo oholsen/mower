@@ -1,0 +1,12 @@
+id: hagedag
+name: Hagedag
+type: hagedag
+
+battery_cutoff: 10.0
+max_speed: 0.4  # m/s
+max_omega: 0.3  # rad/s
+wheel_base: 0.325  # m
+
+motor_control:
+  port: /dev/ttyS0
+

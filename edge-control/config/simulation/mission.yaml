@@ -1,0 +1,6 @@
+control:
+  speed: 0.3
+  omega: 0.4
+
+on_site:
+  enabled: False

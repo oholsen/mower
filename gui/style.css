@@ -1,0 +1,35 @@
+body {
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+.ui-draggable, .ui-droppable {
+	background-position: top;
+}
+
+.ui-button { 
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  width: auto;
+  padding: 0.3em 0.2em;
+}
+
+#map {
+    float: left;
+    position: relative;
+    width: 1200px;
+    height: 1200px;
+}
+
+#statusgrid tr td {
+	font-size: small;
+}
+
+#control {
+    float: right;
+    width: 300px;
+    background-color: azure;
+    border: 1px;
+    padding: 20px;
+    margin: 20px;
+}

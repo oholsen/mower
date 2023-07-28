@@ -1,0 +1,14 @@
+.idea/
+.vscode/
+__pycache__/
+edge-control/position.yaml
+data/
+*.log
+*.pyc
+*.egg-info/
+*.npy
+.coverage
+*.bag
+*.avi
+
+edge-control/version
