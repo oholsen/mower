@@ -10,7 +10,7 @@ handlers:
     level: DEBUG
     class: logging.handlers.TimedRotatingFileHandler
     formatter: default
-    filename: data/record.log
+    filename: control.log
     when: midnight
     backupCount: 10
 formatters:
