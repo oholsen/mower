@@ -21,7 +21,7 @@ def start_tasks(aws, name: str = ""):
         name = str(aws)
 
     async def _wrap():
-        done, pending = await asyncio.wait(aws, return_when=asyncio.FIRST_EXCEPTION)
+        done, pending = await asyncio.wait([asyncio.create_task(t) for t in aws], return_when=asyncio.FIRST_EXCEPTION)
         for task in done:
             logger.error("Task %s terminated: %s", task, task.result())
         for task in pending:

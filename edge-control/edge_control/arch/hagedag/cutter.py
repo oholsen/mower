@@ -2,16 +2,43 @@ import atexit
 import logging
 import signal
 
-import pigpio
 
 logger = logging.getLogger(__name__)
-pi = pigpio.pi()
-In1 = 23
-In2 = 22
-CutterPin = 23
+
+if 0:
+    import pigpio
+    pi = pigpio.pi()
+    In1 = 23
+    In2 = 22
+    CutterPin = 23
 
 
-class BrushedCutter:
+import gpiozero
+In1 = gpiozero.LED(23)
+In2 = gpiozero.LED(22)
+
+
+class BrushedCutter2:
+
+    def off(self):
+        In1.off()
+        In2.off()
+
+    def stop(self):
+        self.off()
+
+    def power(self, power):
+        if power > 0:
+            In1.on()
+            In2.off()
+        elif power < 0:
+            In1.off()
+            In2.on()
+        else:
+            self.stop()
+
+
+class BrushedCutter1:
     # No power regulation, geared motor is too slow at full speed
 
     def __init__(self):
@@ -73,7 +100,7 @@ class BrushlessCutterBidirectional:
         self.cutter.amplitude(power)
 
 
-cutter = BrushedCutter()
+cutter = BrushedCutter2()
 atexit.register(cutter.stop)
 
 
@@ -91,9 +118,10 @@ def start_watch_dog(loop):
 
 
 if __name__ == "__main__":
-    import sys
+    import sys, time
 
     try:
         cutter.power(float(sys.argv[1]))
+        time.sleep(3)
     finally:
         cutter.off()

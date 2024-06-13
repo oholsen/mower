@@ -6,7 +6,9 @@ class SimulationStatus:
     time = Status[float]()
     ok = Status[bool]()
     turtle = Status[Turtle]()
-
+    # speeds, omega
+    cut_power = Status[float]()
+    
     @staticmethod
     def fault(t: float):
         SimulationStatus.time.check(t, "Simulated time")

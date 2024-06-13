@@ -24,6 +24,7 @@ class SimulatedRobot:
         self.turtle = Turtle(x, y, theta)
         self.speed = 0.0
         self.omega = 0.0  # not part of tracking state
+        self.cut_power = 0.0
         self.t0 = time()
         self.move_timeout: Optional[float] = None
 
@@ -73,6 +74,7 @@ class SimulatedRobot:
             t = self.time()
             SimulationStatus.time.set(t)
             SimulationStatus.ok.set(False if i % 20 == 0 else True)
+            SimulationStatus.cut_power = self.cut_power
             logger.debug("Heartbeat from simulator: %f", t)
             await topics.robot_state.publish(Time(t, t))
             i += 1

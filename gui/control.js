@@ -10,12 +10,13 @@
     const Omega = 0.1;
     var speed = 0;
     var omega = 0;
-
+    var cut_power = 0;
 
     $('#forward').on('click', function (e) { speed = Speed; });
     $('#backward').on('click', function (e) { speed = -Speed; });
     $('#left').on('click', function (e) { omega = Omega; });
     $('#right').on('click', function (e) { omega = -Omega; });
+    $('#cut').on('click', function (e)  { cut_power = 1; });
     $('#stop').on('click', function (e) { stop(); });
 
     $('#mission_start').on('click', function (e) { mission_start(); });
@@ -25,6 +26,7 @@
     function stop() {
       speed = 0;
       omega = 0;
+      cut_power = 0;
       post("move/stop", null);
     }
 
@@ -69,7 +71,7 @@
         var heartbeatTimer;
 
         function heartbeat() {
-          let timeout = robot_status.time.timestamp + 1.5;
+          let timeout = robot_status.time.robot_time + 2.5;
           post("move", {timeout: timeout, speed: speed, omega: omega});
         }
 

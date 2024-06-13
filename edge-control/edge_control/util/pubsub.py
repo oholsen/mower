@@ -19,7 +19,7 @@ class Topic(Generic[T]):
         clz = self.__orig_class__.__args__[0]  # type: ignore
         assert isinstance(o, clz), "Invalid type for topic %s: %s" % (self.name, o)
         if self._queues:
-            await asyncio.wait([q.put(o) for q in self._queues])
+            await asyncio.wait([asyncio.create_task(q.put(o)) for q in self._queues])
 
     def subscription(self) -> asyncio.Queue:
         queue: asyncio.Queue = asyncio.Queue()

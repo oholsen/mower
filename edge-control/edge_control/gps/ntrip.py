@@ -60,7 +60,7 @@ async def ntrip_client(config: NtripConfig):
         response = str(data, "ascii")
         logger.debug("Header response: %r", response)
         if not response.startswith("HTTP/1.0 200 OK"):
-            raise RuntimeError("Invalid response from NTRIP service")
+            raise RuntimeError("Invalid response from NTRIP service: " + str(response))
 
         async def request(nmea: str):
             logger.debug("Write %s", nmea)

@@ -60,7 +60,7 @@ async def post(message: str):
 
 
 async def connection(ws: WebSocketServerProtocol, path: str):
-    from .models.messages import MissionAbort, MissionStart, MoveCommand, StopCommand
+    from .models.messages import MissionAbort, MissionStart, MoveCommand, StopCommand, CutCommand
 
     logger.info("Connection from %r %r", ws, path)
     connections.add(ws)
@@ -82,6 +82,9 @@ async def connection(ws: WebSocketServerProtocol, path: str):
                 omega = message.get("omega")
                 logger.debug("Publish command %r", MoveCommand(timeout, speed, omega))
                 await topics.robot_command.publish(MoveCommand(timeout, speed, omega))
+            elif topic == "move/cut" and message:
+                power = message.get("power")
+                await topics.robot_command.publish(CutCommand(timeout, power))
             elif topic == "mission/start" and message:
                 await topics.mission_command.publish(MissionStart(message))
             elif topic == "mission/abort":

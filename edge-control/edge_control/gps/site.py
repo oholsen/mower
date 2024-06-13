@@ -32,11 +32,11 @@ async def world_to_site():
 
         # Filter on position quality
         if gga.quality < site_config.gps_quality:
-            logger.warning("GPS position ignored with quality: %r", gga.quality)
+            logger.debug("GPS position ignored with quality: %r", gga.quality)
             continue
 
         if gga.hdop > site_config.gps_hdop:
-            logger.warning("GPS position ignored with hdop: %r", gga.hdop)
+            logger.debug("GPS position ignored with hdop: %r", gga.hdop)
             continue
 
         try:

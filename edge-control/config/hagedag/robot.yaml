@@ -10,3 +10,6 @@ wheel_base: 0.325  # m
 motor_control:
   port: /dev/ttyS0
 
+mower:
+  cut_power: 1
+  cut_diameter: 0.2

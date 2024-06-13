@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import cmath
+import functools
 import json
 import math
 from enum import Enum
@@ -24,13 +25,13 @@ class RobotType(Enum):
     jackal = 5
 
 
-@dataclass
+@dataclass(frozen=True)
 class MowerConfig:
     cut_diameter: float  # m
     cut_power: float  # PWM duty cycle [-1, 1]
 
 
-@dataclass
+@dataclass(frozen=True)
 class DockConfig:
     position: Vector2D
     heading: float  # radians
@@ -48,13 +49,13 @@ class DockConfig:
         return Vector2D(p.real, p.imag)
 
 
-@dataclass
+@dataclass(frozen=True)
 class CameraConfig:
     pan_offset: float  # degrees
     tilt_offset: float  # degrees
 
 
-@dataclass
+@dataclass(frozen=True)
 class RealSenseConfig:
     position: Vector3D  # front center of module
     # direction: Quaternion
@@ -63,13 +64,13 @@ class RealSenseConfig:
     depth: bool = True
 
 
-@dataclass
+@dataclass(frozen=True)
 class SerialConfig:
     port: str
     baud_rate: int = 115_200
 
 
-@dataclass
+@dataclass(frozen=True)
 class SiteReferenceConfig:
     latitude: float
     longitude: float
@@ -77,10 +78,9 @@ class SiteReferenceConfig:
     # The rotation is the "compass course" of the desired site y axis.
     # Rotates the N/E coordinates clockwise around the reference point to get site coordinates.
 
-    _utm0: UTM = field(init=False)
-
-    def __post_init__(self):
-        self._utm0 = LatLon(self.latitude, self.longitude).utm()
+    @functools.cached_property
+    def _utm0(self) -> UTM:
+        return LatLon(self.latitude, self.longitude).utm()
 
     def to_site(self, lat: float, lon: float, _height: float = 0) -> Tuple[float, float]:
         return self._to_site(LatLon(lat, lon).utm())
@@ -99,7 +99,7 @@ class SiteReferenceConfig:
         return self._utm0.add(p.real, p.imag)
 
 
-@dataclass
+@dataclass(frozen=True)
 class Vector2D:
     x: float
     y: float
@@ -108,29 +108,29 @@ class Vector2D:
         return complex(self.x, self.y)
 
 
-@dataclass
+@dataclass(frozen=True)
 class Vector3D(Vector2D):
     z: float
 
 
-@dataclass
+@dataclass(frozen=True)
 class SiteCoordinate(Vector2D):
     comment: Optional[str]
 
 
-@dataclass
+@dataclass(frozen=True)
 class TagPosition(SiteCoordinate):
     z: float
 
 
-@dataclass
+@dataclass(frozen=True)
 class Tag:
     id: int
     position: TagPosition
     # heading/rotation of tag
 
 
-@dataclass
+@dataclass(frozen=True)
 class TagConfig:
     tags: List[Tag]
 
@@ -145,7 +145,7 @@ class TagConfig:
         return None
 
 
-@dataclass
+@dataclass(frozen=True)
 class SiteConfig:
     reference: Optional[SiteReferenceConfig]  # required for GPS tracking
 
@@ -166,7 +166,14 @@ class SiteConfig:
     # to the home base here. It starts to get interesting if a site have multiple compatible docking stations.
     dock: DockConfig = DockConfig(Vector2D(0, 0), 0, 0.4, 0.8)
 
-    shape: Polygon = field(init=False)  # in site coordinates
+
+    @functools.cached_property
+    def shape(self) -> Polygon:
+        # create shape from configured exterior and interiors
+        exterior = [(p.x, p.y) for p in self.exterior]
+        interiors = [[(p.x, p.y) for p in interior] for interior in self.interiors]
+        return Polygon(exterior, interiors)
+      
 
     def on_site(self, x: float, y: float, buffer: float):
         # more efficient to buffer shape (on to many) than to buffer point (many to many)?
@@ -177,27 +184,24 @@ class SiteConfig:
     def load(filename: str = "site.yaml") -> SiteConfig:
         sc = read_config(filename, SiteConfig)
         # TODO: separate map and mapping config? So that this path magic is not needed....
-        if sc.geojson:
-            # load geojson in world coordinates from same directory as SiteConfig and
-            # map to exterior and interiors in site coordinates
-            with filepath(filename).parent.joinpath(sc.geojson).open() as file:
-                feature = json.load(file)
-            shape = geojson.to_shape(feature)
-            if sc.reference:
+        assert not sc.geojson
+        if 0:
+            if sc.geojson:
+                # load geojson in world coordinates from same directory as SiteConfig and
+                # map to exterior and interiors in site coordinates
+                with filepath(filename).parent.joinpath(sc.geojson).open() as file:
+                    feature = json.load(file)
+                shape = geojson.to_shape(feature)
+                if sc.reference:
 
-                def t(lon: float, lat: float, z=None):
-                    assert sc.reference
-                    return sc.reference.to_site(lat, lon)
+                    def t(lon: float, lat: float, z=None):
+                        assert sc.reference
+                        return sc.reference.to_site(lat, lon)
 
-                shape = shapely.ops.transform(t, shape)
-            sc.shape = shape
-            sc.exterior = [SiteCoordinate(x, y, None) for x, y in shape.exterior.coords]
-            sc.interiors = [[SiteCoordinate(x, y, None) for x, y in interior.coords] for interior in shape.interiors]
-        else:
-            # create shape from configured exterior and interiors
-            exterior = [(p.x, p.y) for p in sc.exterior]
-            interiors = [[(p.x, p.y) for p in interior] for interior in sc.interiors]
-            sc.shape = Polygon(exterior, interiors)
+                    shape = shapely.ops.transform(t, shape)
+                sc.shape = shape
+                sc.exterior = [SiteCoordinate(x, y, None) for x, y in shape.exterior.coords]
+                sc.interiors = [[SiteCoordinate(x, y, None) for x, y in interior.coords] for interior in shape.interiors]
         return sc
 
 
@@ -263,14 +267,14 @@ class MissionConfig:
         self.control.validate()
 
 
-@dataclass
+@dataclass(frozen=True)
 class RoombaConfig:
     # actual speed is different from commanded, scale > 1 for higher actual speed
     wheel_scale_left: float = 1.0
     wheel_scale_right: float = 1.0
 
 
-@dataclass
+@dataclass(frozen=True)
 class RobotConfig:
     id: str
     name: str
@@ -295,7 +299,7 @@ class RobotConfig:
         return read_config(filename, RobotConfig)
 
 
-@dataclass
+@dataclass(frozen=True)
 class GpsConfig:
     gps: Optional[SerialConfig] = None
     ntrip: Optional[NtripConfig] = None
@@ -311,7 +315,7 @@ class GpsConfig:
         return read_config(filename, GpsConfig)
 
 
-@dataclass
+@dataclass(frozen=True)
 class SimulationConfig:
     position_sigma: float = 0
 
