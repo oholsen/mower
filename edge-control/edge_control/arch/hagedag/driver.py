@@ -55,6 +55,7 @@ async def _connect():
                 try:
                     if isinstance(message, msgs.StopCommand):
                         await write(messages.StopCommand())
+                        cutter.cutter.stop()
                         await topics.odometry.publish(msgs.Odometry(time.time(), 0, 0))
                     elif isinstance(message, msgs.MoveCommand):
                         await write(from_move(message, cut_power))
