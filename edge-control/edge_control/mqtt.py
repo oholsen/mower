@@ -180,7 +180,7 @@ def mission_control(args):
 
     async def _run():
         await start()
-        await cloud_mqtt_driver()
+        # await cloud_mqtt_driver()
 
     asyncio.run(_run(), debug=args.verbose)
     # logger.info("Shutting down tasks")

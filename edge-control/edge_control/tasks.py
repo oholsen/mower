@@ -57,15 +57,5 @@ async def start():
 
         start_task(start())
 
-    elif robot_config.type == "roomba":
-        from .arch.roomba.tasks import start
-
-        start_task(start())
-
-    elif robot_config.type == "jackal":
-        from .arch.jackal.tasks import start
-
-        start_task(start())
-
     else:
         raise Exception("Invalid robot type: " + robot_config.type)
