@@ -82,7 +82,7 @@ async def connection(ws: WebSocketServerProtocol, path: str):
                 omega = message.get("omega")
                 logger.debug("Publish command %r", MoveCommand(timeout, speed, omega))
                 await topics.robot_command.publish(MoveCommand(timeout, speed, omega))
-            elif topic == "move/cut" and message:
+            elif topic == "cut" and message:
                 power = message.get("power")
                 await topics.robot_command.publish(CutCommand(timeout, power))
             elif topic == "mission/start" and message:

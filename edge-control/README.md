@@ -29,15 +29,17 @@ Dependencies not caught by Poetry:
     sudo apt install libatlas-base-dev  # numpy version 1.19
     
 For the GUI:
-    
-    sudo apt install apache2
+
+
+    sudo apt install lighttpd
+    # sudo apt install apache2
     sudo ln -s $HOME/gui /var/www/html
     
 Copy the gui and edge-control directories over to the home directory on the RPi.
 
-    scp -r edge-control gui <rpi>:
+    rsync -av edge-control gui <rpi>:
 
-Set up the configuration files, including position.yaml with credentials for the NTRIP service, configure the serial ports, etc.
+Set up the configuration files.
      
     
 Install dependencies and test on RPi:
@@ -45,13 +47,9 @@ Install dependencies and test on RPi:
     poetry install --no-root
     poetry run main
     
-Must add `pigpio` on RPi (only required for hagedag):   
-    
-    poetry add pigpio
-
 ## Development
 
-Install poetry (requires Python 3.7 or higher):
+Install poetry (requires Python 3.10 or higher):
 
     python -m pip install --upgrade pip && pip install poetry
 
@@ -63,12 +61,6 @@ Run unit tests (use `-s` to show print() debug output):
 
     poetry run pytest -s -v
 
-
-## Production
-
-Linux service TBD. For now, run 
-
-    poetry run mqtt
 
 
 ## Simulation

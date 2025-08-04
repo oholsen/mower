@@ -8,6 +8,7 @@ class HagedagStatus:
     reports = Counter()
     status = Status[messages.Status]()
     battery = Status[messages.Battery]()
+    cut_power = Status[float]()
 
     @staticmethod
     def fault(t: float):

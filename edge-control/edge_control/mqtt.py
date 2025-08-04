@@ -23,6 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 def publish_to_inrobot(client: Client, topic: str, payload: Any, timestamp: int = None):
+    return
     m = Envelope(topic, payload, timestamp or now()).to_json()
     logger.debug("To InRobot: %s", m)
     client.publish("api", m)
@@ -180,7 +181,7 @@ def mission_control(args):
 
     async def _run():
         await start()
-        # await cloud_mqtt_driver()
+        await cloud_mqtt_driver()
 
     asyncio.run(_run(), debug=args.verbose)
     # logger.info("Shutting down tasks")

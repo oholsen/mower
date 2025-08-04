@@ -25,12 +25,12 @@ def start_tasks(aws, name: str = ""):
         for task in done:
             logger.error("Task %s terminated: %s", task, task.result())
         for task in pending:
-            logger.debug("Stopping task %s", task)
+            logger.debug("Stopping pending task %s", task)
             task.cancel()
         await asyncio.wait(pending)
         logger.error("Task terminated: %s", name)
 
-    logger.info("Task starting: %s", name)
+    logger.info("Task group starting: %s", name)
     return asyncio.create_task(_wrap())
 
 
@@ -45,8 +45,7 @@ def start_task(coroutine: Coroutine, name: str = ""):
         except KeyboardInterrupt:
             raise
         except asyncio.CancelledError:
-            logger.info("Task cancelled: %s", name)
-            pass
+            logger.exception("Task cancelled: %s", name)
         except:
             logger.exception("Task error: %s", name)
         finally:

@@ -20,11 +20,10 @@ from .status import HagedagStatus
 
 logger = logging.getLogger(__name__)
 
-if robot_config.mower is not None:
-    from . import cutter
+from . import cutter
 
 
-def from_move(message: msgs.MoveCommand, cut_power: float) -> messages.MoveCommand:
+def from_move(message: msgs.MoveCommand) -> messages.MoveCommand:
     # v_rot = message.omega * robot_config.wheel_base / 2
     # v_left = message.speed - v_rot
     # v_right = message.speed + v_rot
@@ -48,7 +47,7 @@ async def _connect():
 
         async def commands():
             # initial cut power from config, can be modified with CutCommand, applied to every move command
-            cut_power = robot_config.mower.cut_power if robot_config.mower else 0
+            # cut_power = robot_config.mower.cut_power if robot_config.mower else 0
 
             async for message in topics.robot_command.stream():
                 logger.debug("robot_to_motor message: %r", message)
@@ -56,23 +55,23 @@ async def _connect():
                     if isinstance(message, msgs.StopCommand):
                         await write(messages.StopCommand())
                         cutter.cutter.stop()
+                        HagedagStatus.cut_power.set(0)
                         await topics.odometry.publish(msgs.Odometry(time.time(), 0, 0))
                     elif isinstance(message, msgs.MoveCommand):
-                        await write(from_move(message, cut_power))
+                        await write(from_move(message))
                         await topics.odometry.publish(msgs.Odometry(time.time(), message.speed, message.omega))
-                        if robot_config.mower is not None:
-                            cutter.cutter.power(cut_power)
-                            cutter.reset_timeout()
+                        # TODO: handle cutter separately, or derive MoveCutCommand from MoveCommand, add payloads to Move?
                     elif isinstance(message, msgs.CutCommand):
                         # applied at every MoveCommand to refresh timeout in RPi
                         cut_power = message.power
-                        if robot_config.mower is not None:
-                            cutter.cutter.power(cut_power)
-                            cutter.reset_timeout()
+                        cutter.cutter.power(cut_power)
+                        cutter.reset_timeout()
+                        HagedagStatus.cut_power.set(cut_power)
                 except (KeyboardInterrupt, asyncio.CancelledError):
                     raise
                 except Exception:
-                    logger.exception("commands")
+                    logger.exception("commands %r", message)
+                    # TODO: Stop and abort!?
 
         async def status():
             while True:

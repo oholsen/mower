@@ -2,7 +2,7 @@ version: 1
 disable_existing_loggers: False
 handlers:
   console:
-    level: DEBUG
+    level: INFO
     class: logging.StreamHandler
     formatter: default
     stream: ext://sys.stdout
@@ -26,12 +26,4 @@ loggers:
   websockets:
     level: INFO
   matplotlib:
-    level: INFO
-  edge_control.models.tracking:
-    level: INFO
-  edge_control.gps:
-    level: INFO
-  edge_control.api:
-    level: INFO
-  edge_control.arch:
     level: INFO

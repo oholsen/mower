@@ -8,7 +8,7 @@ from .arch.simulation.status import SimulationStatus
 from .gps.status import GpsStatus
 from .models.messages import Battery, ObstacleDetection, Time
 from .models.state import State
-from .realsense.status import RealsenseStatus
+# from .realsense.status import RealsenseStatus
 from .util.status import Status
 from .util.tasks import start_task
 
@@ -24,7 +24,7 @@ class RobotState:
     state = Status[State]()
     obstacle_depth: Optional[ObstacleDetection] = None
     gps = GpsStatus
-    realsense = RealsenseStatus
+    # realsense = RealsenseStatus
     simulation = SimulationStatus
     hagedag = HagedagStatus
     husqvarna = HusqvarnaStatus
@@ -33,7 +33,7 @@ class RobotState:
     def fault(t: float) -> Optional[str]:
         try:
             assert RobotState.time is not None, "No robot time"
-            RealsenseStatus.fault(t)
+            # RealsenseStatus.fault(t)
             # fault on all registered statuses, but must register per robot
             return None
         except AssertionError as e:
