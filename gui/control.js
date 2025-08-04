@@ -5,7 +5,6 @@
 
     $("button").button();
 
-
     const Speed = 0.1;
     const Omega = 0.1;
     var speed = 0;
@@ -21,7 +20,6 @@
 
     $('#mission_start').on('click', function (e) { mission_start(); });
     $('#mission_abort').on('click', function (e) { mission_abort(); });
-
 
     function stop() {
       speed = 0;
@@ -54,11 +52,34 @@
 
     function mission_start() {
         let name = $('#mission_name').val();
+        if (!name.trim()) {
+            alert('Please enter a mission name');
+            return;
+        }
         post("mission/start", name);
     }
 
     function mission_abort() {
         post("mission/abort", null);
+    }
+
+    function updateTime() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString();
+        $('#time').text(timeString);
+    }
+
+    function updateWebSocketStatus(isConnected) {
+        const statusElement = $('#websocket');
+        const indicator = statusElement.prev('.status-indicator');
+        
+        if (isConnected) {
+            statusElement.text('Connected');
+            indicator.removeClass('offline').addClass('online');
+        } else {
+            statusElement.text('Disconnected');
+            indicator.removeClass('online').addClass('offline');
+        }
     }
 
     function connect() {
@@ -73,17 +94,18 @@
         function heartbeat() {
           let timeout = robot_status.time.robot_time + 2.5;
           post("move", {timeout: timeout, speed: speed, omega: omega});
+          post("cut", {timeout: timeout, power: cut_power});
         }
 
         s.onopen = function (e) {
           console.log("Websocket open");
-          $("#websocket").text("Open");
+          updateWebSocketStatus(true);
           heartbeatTimer = setInterval(() => $("#heartbeat").prop("checked") && heartbeat(), 1000);
         };
         
         s.onclose = function (e) {
           console.log("Websocket closed", e);
-          $("#websocket").text("Closed");
+          updateWebSocketStatus(false);
           clearInterval(heartbeatTimer);
           setTimeout(connect, 5000);
         };
@@ -124,12 +146,18 @@
         
         s.onerror = function (e) {
           console.log("Socket error:", e);
+          updateWebSocketStatus(false);
         };
         
       } catch (ex) {
         console.log("Socket exception:", ex);
+        updateWebSocketStatus(false);
       }
     }
+
+    // Initialize time display and update every second
+    updateTime();
+    setInterval(updateTime, 1000);
 
     connect();
 

@@ -1,54 +1,99 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <style>
-      body {
-        margin: 0px;
-        padding: 0px;
-        font-family: Arial, Helvetica, sans-serif;
-      }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robot Control Interface</title>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="style.css">
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
   </head>
   <body>
-    <div id="map">
-      <canvas id="layer1" style="z-index: 1; position:absolute; left:0px; top:0px;">
-        This text is displayed if your browser does not support HTML5 Canvas.
-      </canvas>
-      <canvas id="layer2" style="z-index: 2; position:absolute; left:0px; top:0px;" onmousemove="onMouseMove(event)">
-        This text is displayed if your browser does not support HTML5 Canvas.
-      </canvas>
-      <div>
-        <span>Cursor &nbsp;<span id="mouse_x">x</span>&nbsp;<span id="mouse_y">y</span></span>&nbsp; &nbsp;
-        <span>Robot &nbsp;<span id="robot_x">x</span>&nbsp;<span id="robot_y">y</span>&nbsp;<span id="robot_heading">heading</span></span>
+    <div class="container">
+      <!-- Map Section -->
+      <div id="map">
+        <div class="map-header">
+          <span>🤖 Robot Control Map</span>
+          <div class="map-info">
+            <span>📍 Cursor: <span id="mouse_x">0.00</span>, <span id="mouse_y">0.00</span></span>
+            <span>🤖 Robot: <span id="robot_x">0.00</span>, <span id="robot_y">0.00</span> (<span id="robot_heading">0°</span>)</span>
+          </div>
+        </div>
+        <canvas id="layer1" style="z-index: 1; position:absolute; left:0px; top:0px;">
+          This text is displayed if your browser does not support HTML5 Canvas.
+        </canvas>
+        <canvas id="layer2" style="z-index: 2; position:absolute; left:0px; top:0px;" onmousemove="onMouseMove(event)">
+          This text is displayed if your browser does not support HTML5 Canvas.
+        </canvas>
       </div>
-    </div>
 
-    <div id="control">
-      <input type="checkbox" id="heartbeat">Control
-      <button id="stop">Stop</button>
-      <button id="cut">Cut</button>
-      <br>
-      <button id="forward">Forward</button>
-      <button id="backward">Backward</button>
-      <button id="left">Left</button>
-      <button id="right">Right</button>
-      <br>
-      <label for="mission_name">Mission</label>
-      <input id="mission_name" type="text">
-      <button id="mission_start">Start</button>
-      <button id="mission_abort">Abort</button>
-      <br>
+      <!-- Control Panel -->
+      <div id="control">
+        <div class="control-header">
+          <h2>🎮 Control Panel</h2>
+          <p>Manual control and mission management</p>
+        </div>
 
-      <table id="statusgrid" style="margin-top: 10px;">
-        <tr><td>Websocket</td><td id="websocket">Closed</td><td></td></tr>
-        <tr><td>Time</td><td id="time"></td><td></td></tr>
-      </table>
-      <pre id="status">Status...</pre>
+        <!-- Manual Control Section -->
+        <div class="control-section">
+          <h3>🎯 Manual Control</h3>
+          <div class="checkbox-wrapper">
+            <input type="checkbox" id="heartbeat">
+            <label for="heartbeat">Enable Control</label>
+          </div>
+          
+          <div class="btn-group">
+            <button id="stop" class="btn btn-danger">🛑 Stop</button>
+            <button id="cut" class="btn btn-warning">✂️ Cut</button>
+          </div>
+          
+          <div class="btn-group">
+            <div class="btn-row">
+              <button id="forward" class="btn btn-success">⬆️ Forward</button>
+              <button id="backward" class="btn btn-success">⬇️ Backward</button>
+            </div>
+            <div class="btn-row">
+              <button id="left" class="btn btn-success">⬅️ Left</button>
+              <button id="right" class="btn btn-success">➡️ Right</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mission Control Section -->
+        <div class="control-section">
+          <h3>🚀 Mission Control</h3>
+          <div class="form-group">
+            <label for="mission_name">Mission Name:</label>
+            <input id="mission_name" type="text" class="form-control" placeholder="Enter mission name...">
+          </div>
+          <div class="btn-group">
+            <button id="mission_start" class="btn btn-success">▶️ Start Mission</button>
+            <button id="mission_abort" class="btn btn-danger">⏹️ Abort Mission</button>
+          </div>
+        </div>
+
+        <!-- Status Section -->
+        <div class="control-section">
+          <h3>📊 System Status</h3>
+          <table id="statusgrid">
+            <tr>
+              <td>🌐 WebSocket</td>
+              <td><span class="status-indicator offline"></span><span id="websocket">Closed</span></td>
+            </tr>
+            <tr>
+              <td>⏰ Time</td>
+              <td><span id="time">--:--:--</span></td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Status Display -->
+        <div class="control-section">
+          <h3>📋 Detailed Status</h3>
+          <pre id="status">Status information will appear here...</pre>
+        </div>
+      </div>
     </div>
 
     <script src="map.js"></script>

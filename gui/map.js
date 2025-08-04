@@ -50,62 +50,96 @@ function _drawPath(ctx, points) {
 function drawMap(ctx, map) {
     console.log("MAP", map);
 
+    // Draw obstacles/interiors with modern styling
     map.interiors.forEach(path => {
         _drawPath(ctx, path);
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = '#e74c3c';
         ctx.fill();
         ctx.lineWidth = 0.05;
-        ctx.strokeStyle = 'red';
+        ctx.strokeStyle = '#c0392b';
         ctx.stroke();
     });
 
+    // Draw exterior boundary with modern styling
     _drawPath(ctx, map.exterior);
-    ctx.fillStyle = 'khaki';
+    ctx.fillStyle = '#2ecc71';
     ctx.fill();
     ctx.lineWidth = 0.05;
-    ctx.strokeStyle = 'red';
+    ctx.strokeStyle = '#27ae60';
     ctx.stroke();
 }
 
 function trail_at(x, y) {
     let ctx = layer1;
-    let radius = 0.10; // meter
+    let radius = 0.08; // meter - slightly smaller for cleaner look
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
-    ctx.fillStyle = 'blue';
+    ctx.fillStyle = '#3498db';
     ctx.fill();
+    // Add subtle border
+    ctx.lineWidth = 0.02;
+    ctx.strokeStyle = '#2980b9';
+    ctx.stroke();
 }
 
 function robot(x, y, heading) {
     let ctx = layer2;
-    let radius = 0.20; // meter
-    // position
+    let radius = 0.25; // meter - slightly larger for better visibility
+    
+    // Robot body with gradient effect
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
-    ctx.fillStyle = 'grey';
+    
+    // Create gradient for robot body
+    const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+    gradient.addColorStop(0, '#ecf0f1');
+    gradient.addColorStop(0.7, '#bdc3c7');
+    gradient.addColorStop(1, '#95a5a6');
+    
+    ctx.fillStyle = gradient;
     ctx.fill();
-
-    // heading indicator
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    let V = 0.3; // meter
-    ctx.lineTo(x + V * Math.cos(heading), y + V * Math.sin(heading));
-    ctx.lineWidth = 0.1; // meter
-    ctx.strokeStyle = 'black';
+    
+    // Robot border
+    ctx.lineWidth = 0.03;
+    ctx.strokeStyle = '#2c3e50';
     ctx.stroke();
 
+    // Heading indicator with arrow
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    let V = 0.35; // meter
+    let arrowX = x + V * Math.cos(heading);
+    let arrowY = y + V * Math.sin(heading);
+    ctx.lineTo(arrowX, arrowY);
+    
+    // Arrow head
+    let arrowHeadLength = 0.08;
+    let arrowHeadAngle = Math.PI / 6;
+    let angle = Math.atan2(arrowY - y, arrowX - x);
+    
+    ctx.lineTo(arrowX - arrowHeadLength * Math.cos(angle - arrowHeadAngle), 
+               arrowY - arrowHeadLength * Math.sin(angle - arrowHeadAngle));
+    ctx.moveTo(arrowX, arrowY);
+    ctx.lineTo(arrowX - arrowHeadLength * Math.cos(angle + arrowHeadAngle), 
+               arrowY - arrowHeadLength * Math.sin(angle + arrowHeadAngle));
+    
+    ctx.lineWidth = 0.05;
+    ctx.strokeStyle = '#e74c3c';
+    ctx.stroke();
+
+    // Update position display
     document.getElementById('robot_x').innerText = x.toFixed(2);
     document.getElementById('robot_y').innerText = y.toFixed(2);
-    document.getElementById('robot_heading').innerText = (heading * 180 / Math.PI).toFixed(0);
+    document.getElementById('robot_heading').innerText = (heading * 180 / Math.PI).toFixed(0) + '°';
 }
 
 function drawOrigin(ctx) {
     ctx.beginPath();
     ctx.arc(0, 0, 0.3, 0, 2 * Math.PI, false);
     ctx.arc(0, 0, 0.5, 0, 2 * Math.PI, false);
-    ctx.fillStyle = 'grey';
+    ctx.fillStyle = '#34495e';
     ctx.lineWidth = 0.01;
-    ctx.strokeStyle = 'black';
+    ctx.strokeStyle = '#2c3e50';
     ctx.stroke();
     ctx.lineWidth = 0.2;
     ctx.beginPath();
@@ -118,6 +152,7 @@ function drawOrigin(ctx) {
 
 function drawGrid(ctx, delta, width) {
     ctx.lineWidth = width;
+    ctx.strokeStyle = '#ecf0f1';
     // TODO: use extent modulus delta instead of fixed limits
     // get extent from inverse mapping from canvas (0,0) and (width, height)
     /*
